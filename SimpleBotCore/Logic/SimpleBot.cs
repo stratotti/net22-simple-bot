@@ -1,4 +1,6 @@
-﻿using SimpleBotCore.Bot;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using SimpleBotCore.Bot;
 using SimpleBotCore.Repositories;
 using System;
 using System.Collections.Generic;
@@ -73,8 +75,16 @@ namespace SimpleBotCore.Logic
                 {
                     await WriteAsync("Processando...");
 
-                    // FAZER: GRAVAR AS PERGUNTAS EM UM BANCO DE DADOS
-                    await Task.Delay(5000);
+                    var cliente = new MongoClient("mongodb://localhost:27017");
+                    var db = cliente.GetDatabase("NET22");
+                    var col = db.GetCollection<BsonDocument>("col01");
+                    var doc = new BsonDocument
+                    {
+                        {"Pergunta", texto }
+                    };
+                    col.InsertOne(doc);
+
+                    //var resultado = col.Find(BsonDocument.Parse("{}")).ToList();
 
                     await WriteAsync("Resposta não encontrada");
                 }
