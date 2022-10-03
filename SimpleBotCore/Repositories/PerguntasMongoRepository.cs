@@ -1,11 +1,10 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
 using SimpleBotCore.Repositories.Mongo;
 
 namespace SimpleBotCore.Repositories;
-public class PerguntasMongoRepository
+public class PerguntasMongoRepository : BaseRepositoryMongo<BsonDocument>, IPerguntasMongoRepository
 {
-    //public readonly IMongoCollection<TEntity> _collection;
-    public PerguntasMongoRepository(IMongoDbContext context)
+    public PerguntasMongoRepository(IMongoDbContext context) : base(context)
     {
 
     }

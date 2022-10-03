@@ -12,10 +12,13 @@ namespace SimpleBotCore.Logic
     public class SimpleBot : BotDialog
     {
         IUserProfileRepository _userProfile;
+        private readonly IPerguntasMongoRepository _perguntasMongoRepository;
 
-        public SimpleBot(IUserProfileRepository userProfile)
+        public SimpleBot(IUserProfileRepository userProfile
+                            , IPerguntasMongoRepository perguntasMongoRepository)
         {
             _userProfile = userProfile;
+            _perguntasMongoRepository = perguntasMongoRepository;
         }
 
         protected async override Task BotConversation()
@@ -75,16 +78,20 @@ namespace SimpleBotCore.Logic
                 {
                     await WriteAsync("Processando...");
 
-                    var cliente = new MongoClient("mongodb://localhost:27017");
-                    var db = cliente.GetDatabase("NET22");
-                    var col = db.GetCollection<BsonDocument>("col01");
-                    var doc = new BsonDocument
-                    {
-                        {"Pergunta", texto }
-                    };
-                    col.InsertOne(doc);
+                    //var cliente = new MongoClient("mongodb://localhost:27017");
+                    //var db = cliente.GetDatabase("NET22");
+                    //var col = db.GetCollection<BsonDocument>("col01");
+                    //var doc = new BsonDocument
+                    //{
+                    //    {"Pergunta", texto }
+                    //};
+                    //col.InsertOne(doc);
 
                     //var resultado = col.Find(BsonDocument.Parse("{}")).ToList();
+                    await _perguntasMongoRepository.InsertAsync(new BsonDocument 
+                    { 
+                        { "Pergunta", texto } 
+                    });
 
                     await WriteAsync("Resposta não encontrada");
                 }

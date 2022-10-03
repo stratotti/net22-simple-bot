@@ -3,5 +3,5 @@
 namespace SimpleBotCore.Repositories.Mongo;
 public interface IMongoDbContext
 {
-    IMongoCollection<T> GetCollection<T>(string collectionName);
+    IMongoCollection<T> GetCollection<T>();
 }

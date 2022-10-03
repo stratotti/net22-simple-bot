@@ -7,6 +7,7 @@ namespace SimpleBotCore.Repositories.Mongo;
 public class MongoDbContext : IMongoDbContext
 {
     private readonly IMongoDatabase _mongoDatabase;
+    private readonly string _collectionName;
 
     public MongoDbContext(IOptions<ConnectionStrings> connectionStrings )
     {
@@ -17,11 +18,12 @@ public class MongoDbContext : IMongoDbContext
           new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
         MongoClient mongoClient = new(settings);
 
-        this._mongoDatabase = mongoClient.GetDatabase(connectionStrings.Value.DataBase);
+        _mongoDatabase = mongoClient.GetDatabase(connectionStrings.Value.DataBase);
+        _collectionName = connectionStrings.Value.Collection;
     }
 
-    public IMongoCollection<T> GetCollection<T>(string collectionName)
+    public IMongoCollection<T> GetCollection<T>()
     {
-        return this._mongoDatabase.GetCollection<T>(collectionName);
+        return this._mongoDatabase.GetCollection<T>(_collectionName);
     }
 }

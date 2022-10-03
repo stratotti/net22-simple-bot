@@ -9,6 +9,7 @@ using SimpleBotCore.Bot;
 using SimpleBotCore.Configuration;
 using SimpleBotCore.Logic;
 using SimpleBotCore.Repositories;
+using SimpleBotCore.Repositories.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,8 @@ namespace SimpleBotCore
                         configuration.GetSection(nameof(ConnectionStrings)).Bind(settings);
                     });
 
+            services.AddSingleton<IMongoDbContext, MongoDbContext>();
+            services.AddScoped<IPerguntasMongoRepository, PerguntasMongoRepository>();
             services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
             services.AddSingleton<IBotDialogHub, BotDialogHub>();
             services.AddSingleton<BotDialog, SimpleBot>();
