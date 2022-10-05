@@ -1,6 +1,9 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using SimpleBotCore.Bot;
+using SimpleBotCore.Configuration;
+using SimpleBotCore.Model;
 using SimpleBotCore.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,13 +15,16 @@ namespace SimpleBotCore.Logic
     public class SimpleBot : BotDialog
     {
         IUserProfileRepository _userProfile;
-        private readonly IPerguntasMongoRepository _perguntasMongoRepository;
-
+        private readonly string _dataBaseType;
+        private readonly IPerguntasRepository _perguntaRepository;
+        
         public SimpleBot(IUserProfileRepository userProfile
-                            , IPerguntasMongoRepository perguntasMongoRepository)
+                            , IPerguntasRepository perguntaRepository
+                            , IOptions<AppSettings> appSettings)
         {
             _userProfile = userProfile;
-            _perguntasMongoRepository = perguntasMongoRepository;
+            _perguntaRepository = perguntaRepository;
+            _dataBaseType = appSettings.Value.DataBaseType;
         }
 
         protected async override Task BotConversation()
@@ -78,20 +84,8 @@ namespace SimpleBotCore.Logic
                 {
                     await WriteAsync("Processando...");
 
-                    //var cliente = new MongoClient("mongodb://localhost:27017");
-                    //var db = cliente.GetDatabase("NET22");
-                    //var col = db.GetCollection<BsonDocument>("col01");
-                    //var doc = new BsonDocument
-                    //{
-                    //    {"Pergunta", texto }
-                    //};
-                    //col.InsertOne(doc);
-
-                    //var resultado = col.Find(BsonDocument.Parse("{}")).ToList();
-                    await _perguntasMongoRepository.InsertAsync(new BsonDocument 
-                    { 
-                        { "Pergunta", texto } 
-                    });
+                    BotPergunta pergunta = new(texto);
+                    await _perguntaRepository.InsertAsync(pergunta);
 
                     await WriteAsync("Resposta não encontrada");
                 }

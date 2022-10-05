@@ -12,7 +12,7 @@ public class MongoDbContext : IMongoDbContext
     public MongoDbContext(IOptions<ConnectionStrings> connectionStrings )
     {
         MongoClientSettings settings = MongoClientSettings.FromUrl(
-          new MongoUrl(connectionStrings.Value.DbConnection));
+          new MongoUrl(connectionStrings.Value.DbConnectionMongo));
 
         settings.SslSettings =
           new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };

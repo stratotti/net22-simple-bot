@@ -10,6 +10,7 @@ using SimpleBotCore.Configuration;
 using SimpleBotCore.Logic;
 using SimpleBotCore.Repositories;
 using SimpleBotCore.Repositories.Mongo;
+using SimpleBotCore.Repositories.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,9 @@ namespace SimpleBotCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
             services
                 .AddOptions<ConnectionStrings>()
                 .Configure<IConfiguration>(
@@ -37,8 +41,13 @@ namespace SimpleBotCore
                         configuration.GetSection(nameof(ConnectionStrings)).Bind(settings);
                     });
 
+            services.AddSingleton<ISqlDbContext, SqlDbContext>();
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
-            services.AddScoped<IPerguntasMongoRepository, PerguntasMongoRepository>();
+            services.AddSingleton<Func<IEnumerable<IPerguntasRepository>>>(x => () => x.GetService<IEnumerable<IPerguntasRepository>>()!);
+
+            services.AddScoped<IPerguntasRepository, PerguntasSqlRepository>();
+            services.AddSingleton<IPerguntasRepository, PerguntasMongoRepository>();
+
             services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
             services.AddSingleton<IBotDialogHub, BotDialogHub>();
             services.AddSingleton<BotDialog, SimpleBot>();

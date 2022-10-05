@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 namespace SimpleBotCore.Repositories.Mongo;
-public abstract class BaseRepositoryMongo<TEntity> : IBaseRepositoryMongo<TEntity>
+public abstract class BaseRepositoryMongo<TEntity> : IBaseRepository<TEntity>
 {
     public readonly IMongoCollection<TEntity> _collection;
 
